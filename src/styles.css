@@ -234,7 +234,7 @@ textarea.field { resize: vertical; }
   .drawer {
     display: flex; flex-direction: column; gap: 4px;
     position: fixed; inset: calc(80px + env(safe-area-inset-top, 0px)) 0 0; padding: 16px var(--pad) 40px;
-    background: var(--moss); overflow-y: auto;
+    z-index: 49; color: var(--pearl); background: var(--moss); overflow-y: auto; overscroll-behavior: contain;
     opacity: 0; visibility: hidden; transform: translateY(-8px); transition: opacity 0.25s, transform 0.25s, visibility 0.25s;
   }
   .drawer--open { opacity: 1; visibility: visible; transform: none; }
