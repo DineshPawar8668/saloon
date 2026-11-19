@@ -15,9 +15,21 @@ export default function Header() {
 
   useEffect(() => {
     document.body.style.overflow = open ? "hidden" : "";
+    if (!open) return;
+    const onKey = (e) => e.key === "Escape" && setOpen(false);
+    const mq = window.matchMedia("(min-width: 901px)");
+    const onMq = (e) => e.matches && setOpen(false);
+    window.addEventListener("keydown", onKey);
+    mq.addEventListener("change", onMq);
+    return () => {
+      document.body.style.overflow = "";
+      window.removeEventListener("keydown", onKey);
+      mq.removeEventListener("change", onMq);
+    };
   }, [open]);
 
   return (
+    <>
     <header className={`hdr ${solid || open ? "hdr--solid" : ""}`}>
       <div className="container hdr__bar">
         <a href="#home" className="brand" onClick={() => setOpen(false)}>
@@ -36,19 +48,23 @@ export default function Header() {
           className="hdr__toggle"
           aria-label={open ? "Close menu" : "Open menu"}
           aria-expanded={open}
+          aria-controls="mobile-drawer"
           onClick={() => setOpen(!open)}
         >
           {open ? <X size={24} /> : <Menu size={24} />}
         </button>
       </div>
+    </header>
 
-      <div className={`drawer ${open ? "drawer--open" : ""}`}>
+      {/* Drawer lives outside <header>: header's backdrop-filter would otherwise
+          become the containing block for this fixed element and collapse it. */}
+      <div id="mobile-drawer" className={`drawer ${open ? "drawer--open" : ""}`}>
         {NAV.map((n) => (
           <a key={n.id} href={`#${n.id}`} className="drawer__link display" onClick={() => setOpen(false)}>{n.label}</a>
         ))}
         <a href="#book" className="btn btn--rose btn--block" onClick={() => setOpen(false)}>Book appointment</a>
         <a href={`tel:${SALON.tel}`} className="drawer__phone">Call {SALON.phone}</a>
       </div>
-    </header>
+    </>
   );
 }
